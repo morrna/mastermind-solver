@@ -1,12 +1,12 @@
 name:                mastermind-solver
 version:             0.1.0.0
 -- synopsis:
--- description:
+description:         A simple solver for Mastermind written in Haskell.
 homepage:            https://github.com/morrna/mastermind-solver#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Nathan Morrison
-maintainer:          example@example.com
+maintainer:          morrna@gmail.com
 copyright:           2017 Nathan Morrison
 category:            Desktop
 build-type:          Simple
