@@ -24,7 +24,7 @@ main = do
 
 
 
--- Input is a guess; output is an IO wrapped version of remaining possibilities
+-- Input is a guess plus the list of remaining possibilities
 narrowGuesses :: [Int] -> [[Int]] -> (IO Bool)
 narrowGuesses tryG oldposs = do
     putStrLn $ "Try this guess: " ++ (show tryG)

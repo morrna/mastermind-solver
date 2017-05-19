@@ -20,7 +20,6 @@ allGuesses np nc = [ c:ps | c <- [0 .. (nc - 1)]
                             , ps <- (allGuesses (np-1) nc) ]
 
 -- Utility stuff
--- probably need this because I don't know the libraries well enough.
 countIn :: [Int] -> Int -> Int
 countIn l v = length $ filter (v==) l
 
@@ -43,8 +42,6 @@ guessesExact (hh:ht) (gh:gt)
                     , en )
     where ( hl, gl, en ) = guessesExact ht gt
 
--- WRONG
--- if h has two pegs the same, a single match in g will be double counted
 guessesInexact :: ([Int], [Int], Int) -> (Int, Int)
 guessesInexact (h, g, e) = let hn = nub h in
                            (e, sum $ zipWith min
