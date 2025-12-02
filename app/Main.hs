@@ -1,22 +1,21 @@
 module Main where
 
 import Lib
+import qualified Mastermind.Pegs as Pegs
 
 main = do
     let numPegs = 4
     let numColors = 8
-    let properPeg' = (properPeg numColors)
-    let properGuess' = (properGuess numPegs numColors)
-    let allG = allGuesses numPegs numColors
+    let allG = Pegs.allStates numColors numPegs
 
-    let firstGuess = map (`mod` numColors) [ 0 .. (numPegs-1) ]
+    let firstGuess = map ((+1) . (`mod` numColors)) [ 0 .. (numPegs-1) ]
 
     putStrLn "starting Mastermind solver"
     putStrLn $ "This is for a game with " ++ (show numPegs)
             ++ " pegs to guess and " ++ (show numColors)
             ++ " distinct colors."
 
-    win <- narrowGuesses firstGuess allG
+    win <- narrowGuesses firstGuess $ (Pegs.pegColor <$>) <$> allG
     if win
         then putStrLn "Congrats on the win!"
         else putStrLn "Aw, what went wrong?"
