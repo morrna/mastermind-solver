@@ -40,5 +40,9 @@ narrowGuesses tryG oldposs = do
             return True
         else do
             let newposs = filter (\gg -> guessComp tryG gg == comp) oldposs
-            narrowGuesses (head newposs) newposs
+            case newposs of
+                headposs:_ -> narrowGuesses headposs newposs
+                _ -> do
+                    putStrLn "No possibilities remain."
+                    return False
 
