@@ -1,6 +1,7 @@
 module Main where
 
 import Lib
+import Text.IO (readUntilSucceed)
 import qualified Mastermind.Pegs as Pegs
 import Mastermind.Pegs (
         Peg(..),
@@ -32,12 +33,9 @@ main = do
 narrowGuesses :: [Int] -> [[Int]] -> (IO Bool)
 narrowGuesses tryG oldposs = do
     putStrLn $ "Try this guess: " ++ (show tryG)
-    putStrLn "How many red pegs did you get?"
-    redStr <- getLine
-    putStrLn "How many white pegs did you get?"
-    whiteStr <- getLine
-    -- flag: read is incomplete; should replace
-    let comp = Feedback (read redStr :: Int) (read whiteStr :: Int)
+    fRed <- readUntilSucceed "How many red pegs did you get?"
+    fWhite <- readUntilSucceed "How many white pegs did you get?"
+    let comp = Feedback fRed fWhite
     -- flag: `4` should be `numPegs` - refactor to not hard code
     if comp == Feedback 4 0
         then do
