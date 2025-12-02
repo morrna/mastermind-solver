@@ -6,6 +6,7 @@ module Mastermind.Pegs (
     Peg(..),
     allStates,
     Feedback(..),
+    getFeedback,
 ) where
 
 -- | Represent a peg as a number specifying its color.
@@ -43,3 +44,47 @@ instance Semigroup Feedback where
 
 instance Monoid Feedback where
     mempty = Feedback 0 0
+
+-- | Accumulator for tallying feedback
+accFeedback :: (Eq p)
+    => p
+    -> p
+    -> ([p], [p], Feedback) -- ^ Unmatched guess pegs, unmatched true pegs, current feedback
+    -> ([p], [p], Feedback)
+accFeedback p q (leftPs, leftQs, feedback)
+    | p == q
+        = ( leftPs, leftQs, feedback <> Feedback 1 0 )
+    | elem p leftQs && elem q leftPs
+        = ( dropFirstMatch q leftPs, dropFirstMatch p leftQs, feedback <> Feedback 0 2 )
+    | elem p leftQs
+        = ( leftPs, q:(dropFirstMatch p leftQs), feedback <> Feedback 0 1 )
+    | elem q leftPs
+        = ( p:(dropFirstMatch q leftPs), leftQs, feedback <> Feedback 0 1 )
+    | otherwise
+        = ( p:leftPs, q:leftQs, feedback)
+
+dropFirstMatch :: (Eq p) => p -> [p] -> [p]
+dropFirstMatch p ps
+    = let
+        (beforeMatch, matchAndAfter) = span (/= p) ps
+    in
+        beforeMatch ++ drop 1 matchAndAfter
+
+foldFeedback :: (Eq p)
+    => [p]
+    -> [p]
+    -> ([p], [p], Feedback)
+foldFeedback [] []  = ([], [], mempty)
+foldFeedback _ []   = ([], [], InvalidFeedback)
+foldFeedback [] _   = ([], [], InvalidFeedback)
+foldFeedback (ph:pt) (qh:qt)
+    = accFeedback ph qh $ foldFeedback pt qt
+
+-- | Get the feedback for a peg guess
+getFeedback
+    :: [Peg]  -- ^ Guessed peg state
+    -> [Peg]  -- ^ True peg state
+    -> Feedback
+getFeedback ps qs
+    = case foldFeedback ps qs of
+        (_, _, f) -> f
