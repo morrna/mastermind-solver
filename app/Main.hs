@@ -2,6 +2,11 @@ module Main where
 
 import Lib
 import qualified Mastermind.Pegs as Pegs
+import Mastermind.Pegs (
+        Peg(..),
+        Feedback(..),
+        getFeedback,
+    )
 
 main = do
     let numPegs = 4
@@ -31,14 +36,16 @@ narrowGuesses tryG oldposs = do
     redStr <- getLine
     putStrLn "How many white pegs did you get?"
     whiteStr <- getLine
-    let comp = ( (read redStr :: Int), (read whiteStr :: Int) )
-    if comp == (4,0)
+    -- flag: read is incomplete; should replace
+    let comp = Feedback (read redStr :: Int) (read whiteStr :: Int)
+    -- flag: `4` should be `numPegs` - refactor to not hard code
+    if comp == Feedback 4 0
         then do
             putStrLn $ "There were " ++ (show $ length oldposs)
                     ++ " possibilities left."
             return True
         else do
-            let newposs = filter (\gg -> guessComp tryG gg == comp) oldposs
+            let newposs = filter (\gg -> getFeedback (Peg <$> tryG) (Peg <$> gg) == comp) oldposs
             case newposs of
                 headposs:_ -> narrowGuesses headposs newposs
                 _ -> do
