@@ -57,9 +57,7 @@ narrow :: Monad m
     -> [([Peg], Feedback)]  -- ^ Guesses so far
     -> m Bool
 narrow interface guessSoFar = do
-        let tryNextGuess = if null guessSoFar
-            then Just firstGuess
-            else listToMaybe $ filter checkGSF allGameStates
+        let tryNextGuess = listToMaybe $ filter checkGSF allGameStates
         case tryNextGuess of
             Nothing -> return False
             Just nextGuess -> do
@@ -70,7 +68,6 @@ narrow interface guessSoFar = do
                 else narrow interface $ (nextGuess, nextFeedback):guessSoFar
     where
         allGameStates = onGameParams allStates interface
-        firstGuess = onGameParams (\nc np -> map (Peg . (+1) . (`mod` nc)) [ 0 .. (np-1) ]) interface
         matchGuess g1 (g2, fb) = fb == getFeedback g1 g2
         checkGSF g1 = all (matchGuess g1) guessSoFar
         isWin fb = (reds fb == (numPegs . gameParams) interface)

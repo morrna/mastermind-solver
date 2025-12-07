@@ -20,11 +20,15 @@ allStates
     :: Int -- ^ Total number of possible colors
     -> Int -- ^ Number of peg slots in each guess
     -> [[Peg]]
-allStates _ 0 = [[]]
-allStates nColor nPeg
-    = [ (Peg color):otherPegs |
-        otherPegs <- allStates nColor (nPeg-1),
-        color <- [1..nColor]
+allStates nColor nPeg = allStatesInternal nColor nPeg 0
+
+-- | Set up the set with staggering to more quickly probe possibilities
+allStatesInternal :: Int -> Int -> Int -> [[Peg]]
+allStatesInternal _ 0 _ = [[]]
+allStatesInternal nColor nPeg offset
+    = [ (Peg ((offset + c) `mod` nColor + 1)):otherPegs |
+        otherPegs <- allStatesInternal nColor (nPeg-1) (offset+1),
+        c <- [0..nColor-1]
     ]
 
 -- | Represents the red and white pegs used to give feedback on a guess
