@@ -13,7 +13,7 @@ module Mastermind.Pegs (
 --
 -- This can be any int to allow for varying numbers of colors specified at run time.
 newtype Peg = Peg { pegColor :: Int }
-    deriving (Eq, Show)
+    deriving (Eq)
 
 -- | All possible combinations of pegs for a given game.
 allStates
