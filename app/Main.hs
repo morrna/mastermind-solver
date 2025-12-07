@@ -1,44 +1,30 @@
-module Main where
+module Main (main) where
 
-import Lib
+import Text.IO (readUntilSucceed)
+import qualified Mastermind.Pegs as Pegs
+import Mastermind.Pegs (
+        Peg(..),
+        Feedback(..),
+        getFeedback,
+    )
+import qualified Mastermind.CLI as CLI
+import Mastermind.Solver (
+        GameParams(..),
+        Interface(..),
+        run,
+    )
+
 
 main = do
     let numPegs = 4
     let numColors = 8
-    let properPeg' = (properPeg numColors)
-    let properGuess' = (properGuess numPegs numColors)
-    let allG = allGuesses numPegs numColors
+    let interface = Interface {
+            gameParams = GameParams { numColors = numColors, numPegs = numPegs }
+        ,   displayGuess = CLI.displayGuess
+        ,   askUserFeedback = CLI.readFeedback
+        }
 
-    let firstGuess = map (`mod` numColors) [ 0 .. (numPegs-1) ]
+    CLI.putStartMessage numColors numPegs
 
-    putStrLn "starting Mastermind solver"
-    putStrLn $ "This is for a game with " ++ (show numPegs)
-            ++ " pegs to guess and " ++ (show numColors)
-            ++ " distinct colors."
-
-    win <- narrowGuesses firstGuess allG
-    if win
-        then putStrLn "Congrats on the win!"
-        else putStrLn "Aw, what went wrong?"
-
-
-
-
--- Input is a guess plus the list of remaining possibilities
-narrowGuesses :: [Int] -> [[Int]] -> (IO Bool)
-narrowGuesses tryG oldposs = do
-    putStrLn $ "Try this guess: " ++ (show tryG)
-    putStrLn "How many red pegs did you get?"
-    redStr <- getLine
-    putStrLn "How many white pegs did you get?"
-    whiteStr <- getLine
-    let comp = ( (read redStr :: Int), (read whiteStr :: Int) )
-    if comp == (4,0)
-        then do
-            putStrLn $ "There were " ++ (show $ length oldposs)
-                    ++ " possibilities left."
-            return True
-        else do
-            let newposs = filter (\gg -> guessComp tryG gg == comp) oldposs
-            narrowGuesses (head newposs) newposs
-
+    win <- run interface
+    CLI.finalReaction win

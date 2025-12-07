@@ -1,5 +1,5 @@
 name:                mastermind-solver
-version:             0.1.0.0
+version:             0.1.1
 -- synopsis:
 description:         A simple solver for Mastermind written in Haskell.
 homepage:            https://github.com/morrna/mastermind-solver#readme
@@ -7,7 +7,7 @@ license:             BSD3
 license-file:        LICENSE
 author:              Nathan Morrison
 maintainer:          morrna@gmail.com
-copyright:           2017 Nathan Morrison
+copyright:           2017-2025 Nathan Morrison
 category:            Desktop
 build-type:          Simple
 extra-source-files:  README.md
@@ -15,7 +15,10 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib
+  exposed-modules:     Text.IO
+                     , Mastermind.Pegs
+                     , Mastermind.Solver
+                     , Mastermind.CLI
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
 
@@ -31,8 +34,10 @@ test-suite mastermind-solver-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
+  other-modules:       Mastermind.PegsSpec
   build-depends:       base
                      , mastermind-solver
+                     , hspec
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 
